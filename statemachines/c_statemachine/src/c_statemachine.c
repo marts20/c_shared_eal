@@ -27,7 +27,7 @@ int main()
 	// simulate how it works.
     TurnstileSM( TICK );
     TurnstileSM( PAYED );
-
+    TurnstileSM( PERSONPASSED);
     /* In an actual system it would look more like this:
      *
      * while (1) {
@@ -53,14 +53,21 @@ void TurnstileSM( int event )
                 case PAYED:
                     NextState = UNLOCKED;
                     break;
+
                 default:
                     break;
             }
             break;
-        case UNLOCKED:
 
-            break;
+        case UNLOCKED:
+            switch (event) {
+                case PERSONPASSED:
+            	    NextState = LOCKED;
+            	    break;
+
         default:
+            break;
+            }
             break;
             // The program should never get here !
     }
@@ -72,6 +79,7 @@ void TurnstileSM( int event )
     }
 
     Do( TS_State );
+
 }
 
 /* The 3 functions OnEnter, OnExit and Do are were all the fun happens.
