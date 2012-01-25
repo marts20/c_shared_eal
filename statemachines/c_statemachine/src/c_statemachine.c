@@ -27,6 +27,7 @@ int main()
 	// simulate how it works.
     TurnstileSM( TICK );
     TurnstileSM( PAYED );
+    TurnstileSM( PERSONPASSED);
 
     /* In an actual system it would look more like this:
      *
@@ -82,11 +83,21 @@ void TurnstileSM( int event )
  */
 void OnEnter( int State )
 {
-}
+  int NextState = TS_State;
+
+      switch( TS_State ) {
+          case PERSONPASSED:
+
+          NextState = LOCKED;
+          break;
+          }
+      }
+              // The program should never get here !
 
 
 void OnExit( int State)
 {
+
 }
 
 void Do( int State)
