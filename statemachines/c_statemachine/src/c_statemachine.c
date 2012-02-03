@@ -9,11 +9,12 @@
 #include <stdlib.h>
 
 // State definitions
-enum states { LOCKED, UNLOCKED, MAXSTATES };
+enum states { Red, RedYellow, Green, Yellow };
 // Event definitions
-enum events { PAYED, PERSONPASSED, TICK, MAXEVENTS };
+enum events { Stop, Go, Ready, TICK };
 
-int TS_State = LOCKED;
+int TS_State = Red;
+
 // forward function declarations
 void Do( int State );
 void OnEnter( int State);
@@ -24,18 +25,23 @@ void TurnstileSM(int event);
 int main()
 {	// By sending hardcoded events to the SM, it is possible to
 	// simulate how it works.
+    TurnstileSM( Stop );
     TurnstileSM( TICK );
-    TurnstileSM( PAYED );
-    TurnstileSM( PERSONPASSED);
-<<<<<<< HEAD
-=======
+    TurnstileSM( Ready );
+    TurnstileSM( TICK );
+    TurnstileSM( Go );
+    TurnstileSM( TICK );
+    TurnstileSM( Ready );
+    TurnstileSM( TICK );
 
-    int i;
-    for(i=0;i<6;i++)
->>>>>>> refs/remotes/Thomas/master
+
+    int t;
+    for (t=0; t<5; t++) TurnstileSM( TICK );
+
     /* In an actual system it would look more like this:
      *
-     * while (1) {
+     * while (1)
+     * {
      * 		event = Input();
      * 		TurnstileSM( event );
      * }
@@ -51,64 +57,72 @@ int main()
 void TurnstileSM( int event )
 {
     int NextState = TS_State;
+    static int TicksCount = 0;
 
-    switch( TS_State ) {
-        case LOCKED:
-            switch (event ) {
-                case PAYED:
-                    NextState = UNLOCKED;
-                    break;
-
-<<<<<<< HEAD
-=======
-                case PERSONPASSED:
-                  printf("ALARM!! \n");
-                  break;
->>>>>>> refs/remotes/Thomas/master
-                default:
-                  break;
-            }
-            break;
-<<<<<<< HEAD
-
-        case UNLOCKED:
-            switch (event) {
-                case PERSONPASSED:
-            	    NextState = LOCKED;
-            	    break;
-
-=======
-          case UNLOCKED:
-          switch (event)
-          {
-          case PERSONPASSED:
-            NextState = LOCKED;
-            break;
-          case TICK:
-            if(TICK)
+    switch( TS_State )
+    {
+        case Red:
+            switch (event )
             {
-                NextState = LOCKED;
-                break;
+                case Stop:
+                    NextState = RedYellow;
+                    break;
+                default:
+                    break;
             }
-              break;
-          }
             break;
->>>>>>> refs/remotes/Thomas/master
+        case RedYellow:
+            switch (event )
+            {
+                case Ready:
+                    NextState = Green;
+                    break;
+            /*    case TICK:
+                	TicksCount++;
+                	if (TicksCount > 4)
+                	{
+                		NextState = LOCKED;
+                		TicksCount = 0;
+               */ 	}
+                	break;
+
+                case Green:
+                	switch ( event )
+                	{
+                	case Go:
+                		NextState = Yellow;
+                		break;
+                	}
+             break;
+
+                case Yellow:
+                 	switch ( event )
+                	     	{
+                 	case Ready:
+                 	NextState = Red;
+              		break;
+                	     	}
+
+
+
+               break;
+                	default:
+                    break;
+            }
+            break;
         default:
-            break;
-            }
             break;
             // The program should never get here !
     }
 
-    if (NextState != TS_State) {
+    if (NextState != TS_State)
+    {
         OnExit(TS_State);
         OnEnter(NextState);
         TS_State = NextState;
     }
 
     Do( TS_State );
-
 }
 
 /* The 3 functions OnEnter, OnExit and Do are were all the fun happens.
@@ -117,12 +131,10 @@ void TurnstileSM( int event )
  *
  * For simulating the SM a bunch of printf statements should be put here.
  */
-void OnEnter( int state )
+void OnEnter( int State )
 {
 
 }
-              // The program should never get here !
-
 
 void OnExit( int State)
 {
@@ -131,13 +143,23 @@ void OnExit( int State)
 
 void Do( int State)
 {
-    switch (State) {
-        case LOCKED:
-            printf("Door is Locked!\n");
+    switch (State)
+    {
+        case Red:
+            printf("STOP!\n");
             break;
-        case UNLOCKED:
-            printf("Door is unlocked.\n");
+        case Green:
+            printf("GO!\n");
             break;
+
+        case Yellow:
+                    printf("GET READY TO STOP!\n");
+                    break;
+
+        case RedYellow:
+                    printf("GET READY TO GO!\n");
+                    break;
+
+
     }
 }
-
